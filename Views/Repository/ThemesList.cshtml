@@ -1,0 +1,62 @@
+@model IEnumerable<Web.Models.Tematica>
+@{
+  ViewData["Title"] = "Repository Pattern";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
+}
+
+<h2 class="text-center">Themes List</h2>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Repository" asp-action="Index">Repository Pattern</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Themes</li>
+  </ol>
+</nav>
+
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<div class="table-responsive">
+  @if(Model.Count() == 0)
+  {
+    <p>No Themes Registered</p>
+  }
+  else {
+    <table class="table table-dark" >
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var theme in Model)
+      {
+        <tr>
+          <td>@Html.DisplayFor(m => theme.Id)</td>
+          <td>@Html.DisplayFor(m => theme.Nombre)</td>
+          <td>
+              <a asp-controller="Repository" asp-action="ThemeEdit" asp-route-id="@theme.Id" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+              </a> &nbsp;
+                <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
+                    ,'/repository/theme/delete/@theme.Id')" class="btn btn-danger">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </a>
+            </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>
