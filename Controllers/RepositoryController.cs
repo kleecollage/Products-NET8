@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Slugify;
 using Web.Data;
+using Web.Models;
 using Web.Repository;
 
 namespace Web.Controllers;
@@ -33,6 +35,27 @@ public class RepositoryController: Controller
   [Route("/repository-pattern/themes/add")]
   public IActionResult ThemeAdd()
   {
+    return View();
+  }
+
+  [HttpPost]
+  [Route("/repository-pattern/themes/add")]
+  public IActionResult ThemeAdd(Tematica model)
+  {
+    if (ModelState.IsValid)
+    {
+      Tematica theme = new() {
+        Nombre = model.Nombre,
+        Slug = new SlugHelper().GenerateSlug(model.Nombre)
+      };
+      _tematicaRepository.Add(theme);
+
+      FlashClass = "success";
+      FlashMessage = "Theme Added Successfully";
+
+      return RedirectToAction(nameof(ThemeAdd));
+    }
+
     return View();
   }
 
