@@ -141,13 +141,15 @@ public class EntityController(ApplicationDbContext context) : Controller
   [Route("/entity/products-category/{category_id}")]
   public async Task<IActionResult> ProductsCategory(int category_id, string currentFilter, string searchString, int? pageNumber)
   {
-    if (category_id == null) return NotFound();
+    var category = await _context.Categorias.FindAsync(category_id);
+    if (category == null) return NotFound();
+
     if (searchString != null) pageNumber = 1;
     else searchString = currentFilter;
 
     ViewData["CurrentFilter"] = searchString;
     ViewData["pageNumber"] = pageNumber;
-    ViewData["category"] = _context.Categorias.Find(category_id).Nombre;
+    ViewData["category"] = category.Nombre;
     ViewData["category_id"] = category_id;
 
     var products = from p in _context
@@ -275,7 +277,7 @@ public class EntityController(ApplicationDbContext context) : Controller
 
       return RedirectToAction(nameof(ProductEdit));
     }
-    
+
     ViewModel viewModel = new()
     {
         Producto = productUpdate,
@@ -286,6 +288,21 @@ public class EntityController(ApplicationDbContext context) : Controller
     };
 
     return View(viewModel);
+  }
+
+  [Route("/entity/product/delete/{id}")]
+  public async Task<IActionResult> ProductDelete(int id)
+  {
+    var product = _context.Productos.Find(id);
+    if (product == null) return NotFound();
+
+    _context.Productos.Remove(product);
+    await _context.SaveChangesAsync();
+
+    FlashClass = "success";
+    FlashMessage = "Product deleted successfully";
+
+    return RedirectToAction("ProductsPagination", "Entity", new {pageNumber=1});
   }
 
 }
