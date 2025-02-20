@@ -367,6 +367,27 @@ public class EntityController(ApplicationDbContext context, IWebHostEnvironment 
     return View(viewModel);
   }
 
+  [Route("/entity/product-photos-delete/{id}")]
+  public async Task<IActionResult> ProductPhotosDelte(int id)
+  {
+    var product = _context.ProductosFotos.Find(id);
+    if (product == null) return NotFound();
+
+    var product_id = product.ProductoId;
+    var photo = product.Nombre;
+
+    _context.ProductosFotos.Remove(product);
+    await _context.SaveChangesAsync();
+
+    string mainPath = _hostingEnvironment.WebRootPath;
+    var pathImage = Path.Combine(mainPath, @"uploads/products/" + photo);
+    if (System.IO.File.Exists(pathImage)) System.IO.File.Delete(pathImage);
+
+    FlashClass = "success";
+    FlashMessage = "Product image deleted successfully";
+
+    return RedirectToAction("ProductPhotosList", "Entity", new {id = product_id});
+  }
 
 
 }
