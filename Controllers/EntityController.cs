@@ -159,4 +159,22 @@ public class EntityController(ApplicationDbContext context) : Controller
 
     return View(await PaginatedList<Producto>.CreateAsync(products.AsNoTracking(), pageNumber ?? 1, pageSize));
   }
+
+  [Route("/entity/products-search")]
+  public async Task<IActionResult> ProductsSearch([FromQuery(Name= "search")] string search, string currentFilter,
+     string searchString, int? pageNumber)
+  {
+    if (search == null) return NotFound();
+    else searchString = currentFilter;
+
+    ViewData["CurrentFilter"] = searchString;
+    ViewData["pageNumber"] = pageNumber;
+    ViewData["search"] = search;
+
+    var products = from p in _context.Productos where p.Nombre.Contains(search) select p;
+    products = products.OrderByDescending(p => p.Id).Include(c => c.Categoria);
+    int pageSize = 5;
+
+    return View(await PaginatedList<Producto>.CreateAsync(products.AsNoTracking(), pageNumber ?? 1, pageSize));
+  }
 }

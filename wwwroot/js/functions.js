@@ -20,3 +20,9 @@ function confirmSweet(ask, route)
     }
   });
 }
+
+function searchEngine()
+{
+  if (document.getElementById("search").value == "") return false;
+  document.form_search.submit();
+}

@@ -8,25 +8,17 @@
   var total = Model.TotalPages;
   var totalNumericPagination = total + 1;
   var pageNumber = ViewData["pageNumber"];
+  var search = ViewData["search"];
 }
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="index">Home</a></li>
-    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="index">Entity Framework</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Products</li>
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="Index">Entity Framework</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="ProductsPagination">All Products</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Results for: @search</li>
   </ol>
 </nav>
-
-@if (FlashClass != null)
-{
-  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
-    @FlashMessage
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-}
 
 @* SEARCH ENGINE *@
 <div class="row">
@@ -47,11 +39,22 @@
 </div>
 @* /SEARCH ENGINE *@
 
-<h2 class="text-center">Products List With Pagination</h2>
+<h2 class="text-center">Products List</h2>
+<h4>Showing results for: @search</h4>
 <p>Total Pages: @total</p>
 
-<div class="row">
 
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<div class="row">
   @* Add Product Button *@
   <p class="d-flex justify-content-end">
     <a asp-controller="Entity" asp-action="ProductAdd" class="btn btn-success">
@@ -109,15 +112,14 @@
       <ul class="pagination">
         @* FIRST PAGE *@
         <li class="page-item">
-          <a class="page-link" asp-controller="Entity" asp-action="ProductsPagination" asp-route-pageNumber="1"
-            asp-route-currentFilter="@ViewData["CurrentFilter"]" title="First">
+          <a href="/entity/products-search/?search=@search&pageNumber=1" class="page-link" title="First">
             <i class="fas fa-long-arrow-alt-left"></i> <i class="fas fa-long-arrow-alt-left"></i>
           </a>
         </li>
         @* PREVIOUS PAGE *@
         <li class="page-item">
-          <a class="page-link btn btn-default @prevDisabled" asp-controller="Entity" asp-action="ProductsPagination" title="Previous"
-              asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]" >
+          <a href="/entity/products-search/?search=@search&pageNumber=@(Model.PageIndex - 1)"
+            class="page-link btn  btn-default @prevDisabled" title="Previous">
             <i class="fas fa-long-arrow-alt-left"></i>
           </a>
         </li>
@@ -126,9 +128,8 @@
         @for (int i = 1; i < totalNumericPagination; i++)
         {
           <li class="page-item @((int)pageNumber == i ? "active" : "")">
-            <a class="page-link btn btn-default" asp-controller="Entity" asp-action="ProductsPagination" title="Page @i"
-                asp-route-pageNumber="@i" asp-route-currentFilter="@ViewData["CurrentFilter"]" >
-              @i
+            <a href="/entity/products-search/?search=@search&pageNumber=@i" class="page-link" title="Last">
+            @i
             </a>
           </li>
         }
@@ -136,15 +137,14 @@
 
         @* NEXT PAGE *@
         <li class="page-item">
-          <a class="page-link btn btn-default @nextDisabled" asp-controller="Entity" asp-action="ProductsPagination" title="Next"
-              asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]" >
+          <a href="/entity/products-search/?search=@search&pageNumber=@(Model.PageIndex + 1)"
+            class="page-link btn  btn-default @prevDisabled" title="Next">
             <i class="fas fa-long-arrow-alt-right"></i>
           </a>
         </li>
         @* LAST PAGE *@
         <li class="page-item">
-          <a class="page-link" asp-controller="Entity" asp-action="ProductsPagination" asp-route-pageNumber="@total"
-             title="Last">
+          <a href="/entity/products-search/?search=@search&pageNumber=@total" class="page-link" title="Last">
             <i class="fas fa-long-arrow-alt-right"></i> <i class="fas fa-long-arrow-alt-right"></i>
           </a>
         </li>
