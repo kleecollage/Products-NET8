@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Slugify;
 using Web.Data;
@@ -176,5 +177,58 @@ public class EntityController(ApplicationDbContext context) : Controller
     int pageSize = 5;
 
     return View(await PaginatedList<Producto>.CreateAsync(products.AsNoTracking(), pageNumber ?? 1, pageSize));
+  }
+
+  [Route("/entity/products/add")]
+  public async Task<IActionResult> ProductAdd()
+  {
+    ViewModel model = new()
+    {
+        Producto = new(),
+        Categorias = _context.Categorias.Select(c => new SelectListItem() {
+          Text = c.Nombre,
+          Value = c.Id.ToString()
+        })
+    };
+
+    return View(model);
+  }
+
+  [HttpPost]
+  [Route("/entity/products/add")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> ProductAdd(ViewModel model)
+  {
+    if (ModelState.IsValid)
+    {
+      Producto product = new() {
+        Nombre = model.Producto.Nombre,
+        Slug = new SlugHelper().GenerateSlug(model.Producto.Nombre),
+        Descripcion = model.Producto.Descripcion,
+        Precio = model.Producto.Precio,
+        Stock = model.Producto.Stock,
+        Fecha = DateTime.Now,
+        Categoria = _context.Categorias.Find(model.Producto.CategoriaId)
+      };
+
+      _context.Productos.Add(product);
+      await _context.SaveChangesAsync();
+
+      FlashClass = "success";
+      FlashMessage = "Product created successfully";
+
+      return RedirectToAction(nameof(ProductAdd));
+    }
+
+    ViewModel viewModel = new()
+    {
+      Producto = new Producto(),
+      Categorias = _context.Categorias.Select(c => new SelectListItem() {
+        Text = c.Nombre,
+        Value = c.Id.ToString()
+      })
+    };
+
+    return View(model);
   }
 }
