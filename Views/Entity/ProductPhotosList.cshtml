@@ -9,7 +9,9 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
     <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="Index">Entity Framework</a></li>
-    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="ProductsPagination">All Products</a></li>
+    <li class="breadcrumb-item">
+      <a asp-controller="Entity" asp-action="ProductsPagination" asp-route-pageNumber=1>All Products</a>
+    </li>
     <li class="breadcrumb-item active" aria-current="page">Images</li>
   </ol>
 </nav>
