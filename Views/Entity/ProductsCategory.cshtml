@@ -1,0 +1,143 @@
+@model Web.Pagination.PaginatedList<Web.Models.Producto>
+@{
+  ViewData["Title"] = "Entity";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
+  var prevDisabled =  !Model.HasPreviousPage ? "disabled" : "";
+  var nextDisabled =  !Model.HasNextPage ? "disabled" : "";
+  var total = Model.TotalPages;
+  var totalNumericPagination = total + 1;
+  var pageNumber = ViewData["pageNumber"];
+  var category_id = ViewData["category_id"];
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="Index">Entity Framework</a></li>
+    <li class="breadcrumb-item">
+      <a asp-controller="Entity" asp-action="ProductsPagination" asp-route-pageNumber="1">
+        Products Pagination
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Products Category: @ViewData["category"]</li>
+  </ol>
+</nav>
+
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<h2 class="text-center">Products Category: @ViewData["category"]</h2>
+<p>Total Pages: @total</p>
+
+<div class="row">
+  <p class="d-flex justify-content-end">
+    <a asp-controller="Entity" asp-action="ProductAdd" class="btn btn-success">
+      <i class="fas fa-plus"></i> Add
+    </a>
+  </p>
+  <div class="table-responsive">
+    @if(Model.Count() > 0)
+    {
+      <table class="table table-dark table-striped table-bordered table-hover" >
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Category</th>
+          <th scope="col">Name</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Description</th>
+          <th scope="col">Slug</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach(var data in Model)
+        {
+          <tr>
+            <td scope="row">@Html.DisplayFor(m => data.Id)</td>
+            <td>
+              <a href="/entity/products-category/@data.Categoria.Id?pageNumber=1">
+                @Html.DisplayFor(m => data.Categoria.Nombre)
+              </a>
+            </td>
+            <td>@Html.DisplayFor(m => data.Nombre)</td>
+            <td>$@Html.DisplayFor(m => data.Precio)</td>
+            <td>@Html.DisplayFor(m => data.Stock)</td>
+            <td>@data.Descripcion.ToString().Substring(0, (data.Descripcion.Length > 50) ? 50 : data.Descripcion.Length ) ...</td>
+            <td>@Html.DisplayFor(m => data.Slug)</td>
+            <td class="text-center">
+              <a asp-controller="Entity" asp-action="ProductEdit" asp-route-id="@data.Id" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+              </a> &nbsp;
+                <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
+                    ,'/entity/categories/delete/@data.Id')" class="btn btn-danger">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @* Pagination *@
+    <hr />
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        @* FIRST PAGE *@
+        <li class="page-item">
+          <a href="/entity/products-category/@category_id?pageNumber=1" class="page-link" title="First">
+            <i class="fas fa-long-arrow-alt-left"></i> <i class="fas fa-long-arrow-alt-left"></i>
+          </a>
+        </li>
+        @* PREVIOUS PAGE *@
+        <li class="page-item">
+          <a href="/entity/products-category/@category_id?pageNumber=@(Model.PageIndex - 1)"
+            class="page-link btn  btn-default @prevDisabled" title="Previous">
+            <i class="fas fa-long-arrow-alt-left"></i>
+          </a>
+        </li>
+
+        @* NUMERIC PAGES *@
+        @for (int i = 1; i < totalNumericPagination; i++)
+        {
+          <li class="page-item @((int)pageNumber == i ? "active" : "")">
+            <a href="/entity/products-category/@category_id?pageNumber=@i" class="page-link" title="Last">
+            @i
+            </a>
+          </li>
+        }
+        @* /NUMERIC PAGES *@
+
+        @* NEXT PAGE *@
+        <li class="page-item">
+          <a href="/entity/products-category/@category_id?pageNumber=@(Model.PageIndex + 1)"
+            class="page-link btn  btn-default @prevDisabled" title="Next">
+            <i class="fas fa-long-arrow-alt-right"></i>
+          </a>
+        </li>
+        @* LAST PAGE *@
+        <li class="page-item">
+          <a href="/entity/products-category/@category_id?pageNumber=@total" class="page-link" title="Last">
+            <i class="fas fa-long-arrow-alt-right"></i> <i class="fas fa-long-arrow-alt-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    @* / Pagination *@
+    }
+    else
+    {
+      <p>No Records</p>
+    }
+
+  </div>
+
+</div>

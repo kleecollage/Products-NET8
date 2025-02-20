@@ -1,0 +1,44 @@
+@model Web.Models.Categoria
+@{
+  ViewData["Title"] = "Category Edit";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="Index">Entity Framework</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="Categories">Categories</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Edit Category</h2>
+
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<div class="row">
+  <form asp-controller="Entity" asp-action="CategoryEdit" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+      <label asp-for="Nombre" class="control-label">Name</label>
+      <input asp-for="Nombre" type="text" class="form-control" placeholder="Enter category name">
+      <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+  <hr />
+  <input type="hidden" asp-for="Id" />
+  <button type="submit" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Edit
+  </button>
+  </form>
+</div>

@@ -1,0 +1,103 @@
+@{
+  ViewData["Title"] = "Razor";
+}
+
+<div class="text-center">
+  <h1>Razor Page</h1>
+  <h3>Params From Controller</h3>
+  <ul>
+    <li>ID = @ViewData["Id"]</li>
+    <li>SLUG = @ViewData["Slug"]</li>
+    <li>TITLE = @ViewBag.Content</li>
+  </ul>
+
+  <hr />
+  <h3>Current Date</h3>
+  <p>@DateTime.Now</p>
+  <p>Last Week: @(DateTime.Now - TimeSpan.FromDays(70) )</p>
+
+  <hr />
+  <h3>Codification of expressions</h3>
+  <p>
+    @("<strong>Hello!</strong>")
+  </p>
+  <p>
+    @Html.Raw("<strong>Hello!</strong>")
+  </p>
+
+  <hr />
+  <h3>Block Code With Razor</h3>
+  @{
+    var name = "My Razor App";
+    var n1 = 12;
+    var n2 = 13;
+    var result = n1 + n2;
+  }
+  <p>@name</p>
+  <p>Sum @n1 + @n2 = @result</p>
+
+  <hr />
+  <h3>Conditional Statements</h3>
+  @{
+    var age = 20;
+  }
+  @if (age >= 18)
+  {
+    <p>You are an adult</p>
+  }
+  else
+  {
+    <p>You are a child</p>
+  }
+
+  <hr />
+  <h3>Conditional Switch</h3>
+  @{
+    var num = 2;
+  }
+  @switch(num)
+  {
+    case 1:
+      <p>One</p>
+      break;
+    case 2:
+      <p>Two</p>
+      break;
+    case 3:
+      <p>Three</p>
+      break;
+    default:
+      <p>Not a Number, @num</p>
+      break;
+  }
+
+  <hr />
+  <h3>While Loop</h3>
+  @{
+    var i = 0;
+  }
+  @while(i < 5)
+  {
+    <p>Number: @i</p>
+    i++;
+  }
+
+  <hr />
+  <h3>For Loop</h3>
+  @for (int j = 5; j > 0; j--)
+  {
+    <p>Number: @j</p>
+  }
+
+  <hr />
+  <h3>Foreach Loop</h3>
+  @{
+    var names = new List<string> { "John", "Jane", "Doe" };
+  }
+  <ul>
+    @foreach (var item in names)
+    {
+      <li>@item</li>
+    }
+  </ul>
+</div>

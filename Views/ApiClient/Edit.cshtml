@@ -1,0 +1,28 @@
+@model Web.Models.Categoria
+@{
+  ViewData["Title"] = "API Client";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="home" asp-action="index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="apiClient" asp-action="index">API Client</a></li>
+    <li class="breadcrumb-item active" aria-current="page"> Edit </li>
+  </ol>
+</nav>
+
+<h1>API Client</h1>
+
+<div class="row">
+  <form asp-controller="apiClient" asp-action="Edit" method="post">
+    <div class="form-group">
+      <label asp-for="Nombre" class="control-label">Name</label>
+      <input asp-for="Nombre" type="text" class="form-control" placeholder="Enter category name">
+    </div>
+    <hr />
+    <input type="hidden" asp-for="Id" readonly/>
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Edit
+    </button>
+  </form>
+</div>

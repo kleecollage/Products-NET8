@@ -1,0 +1,74 @@
+@model IEnumerable<Web.Models.Categoria>
+@{
+  ViewData["Title"] = "Categories List";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="index">Entity Framework</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Categories</li>
+  </ol>
+</nav>
+
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<h2 class="text-center">Categories List</h2>
+
+<div class="row">
+  <p class="d-flex justify-content-end">
+    <a asp-controller="Entity" asp-action="CategoryAdd" class="btn btn-success">
+      <i class="fas fa-plus"></i> Add
+    </a>
+  </p>
+  <div class="table-responsive">
+    @if(Model.Count() > 0)
+    {
+      <table class="table table-dark table-striped table-bordered table-hover" >
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Slug</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach(var data in Model)
+        {
+          <tr>
+            <td scope="row">@Html.DisplayFor(m => data.Id)</td>
+            <td>@Html.DisplayFor(m => data.Nombre)</td>
+            <td>@Html.DisplayFor(m => data.Slug)</td>
+            <td class="text-center">
+              <a asp-controller="Entity" asp-action="CategoryEdit" asp-route-id="@data.Id" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+              </a> &nbsp;
+                <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
+                    ,'/entity/categories/delete/@data.Id')" class="btn btn-danger">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    }
+    else
+    {
+      <p>No Records</p>
+    }
+
+  </div>
+
+</div>
