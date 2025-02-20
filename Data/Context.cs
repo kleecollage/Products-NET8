@@ -9,5 +9,5 @@ public class ApplicationDbContext: DbContext
 
   public DbSet<Categoria> Categorias { get; set; }
   public DbSet<Producto> Productos { get; set; }
-  public DbSet<ProductoFoto> ProductoFotos { get; set; }
+  public DbSet<ProductosFotos> ProductosFotos { get; set; }
 }

@@ -70,6 +70,7 @@
           <th scope="col">Price</th>
           <th scope="col">Stock</th>
           <th scope="col">Description</th>
+          <th scope="col">Images</th>
           <th scope="col">Slug</th>
           <th scope="col">Actions</th>
         </tr>
@@ -87,7 +88,15 @@
             <td>@Html.DisplayFor(m => data.Nombre)</td>
             <td>$@Html.DisplayFor(m => data.Precio)</td>
             <td>@Html.DisplayFor(m => data.Stock)</td>
-            <td>@data.Descripcion.ToString().Substring(0, (data.Descripcion.Length > 50) ? 50 : data.Descripcion.Length ) ...</td>
+            <td>
+                @data.Descripcion.ToString().Substring(
+                  0, (data.Descripcion.Length > 50) ? 50 : data.Descripcion.Length ) ...
+            </td>
+            <td>
+              <a asp-action="ProductPhotosList" asp-controller="Entity" asp-route-id="@data.Id">
+                <i class="fas fa-camera"></i> Images
+              </a>
+            </td>
             <td>@Html.DisplayFor(m => data.Slug)</td>
             <td class="text-center">
               <a asp-controller="Entity" asp-action="ProductEdit" asp-route-id="@data.Id" class="btn btn-warning">

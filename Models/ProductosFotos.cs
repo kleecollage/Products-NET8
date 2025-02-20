@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Web.Models;
 
-public class ProductoFoto
+public class ProductosFotos
 {
     [Key]
     public int Id { get; set; }

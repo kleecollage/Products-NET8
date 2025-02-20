@@ -8,9 +8,10 @@ using Web.Pagination;
 
 namespace Web.Controllers;
 
-public class EntityController(ApplicationDbContext context) : Controller
+public class EntityController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment) : Controller
 {
   private readonly ApplicationDbContext _context = context;
+  private readonly IWebHostEnvironment _hostingEnvironment = hostEnvironment;
 
   // Attributes for flash messages
   [TempData]
@@ -304,5 +305,68 @@ public class EntityController(ApplicationDbContext context) : Controller
 
     return RedirectToAction("ProductsPagination", "Entity", new {pageNumber=1});
   }
+
+  [Route("/entity/product-photos/{id}")]
+  public async Task<IActionResult> ProductPhotosList(int id)
+  {
+    var product = _context.Productos.Find(id);
+    if (product == null) return NotFound();
+
+    ProductoFotoViewModel model = new() { ProductoFoto = new() };
+
+    ViewBag.Name = product.Nombre;
+    ViewBag.Id = id;
+
+    model.ProductoFotos = await _context.ProductosFotos.Where(p => p.ProductoId == id).ToListAsync();
+
+    return View(model);
+  }
+
+  [HttpPost]
+  [Route("/entity/product-photos/{id}")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> ProductPhotosList(int id, ProductoFotoViewModel model)
+  {
+    if (ModelState.IsValid)
+    {
+      string mainPath = _hostingEnvironment.WebRootPath;
+      var files = HttpContext.Request.Form.Files;
+      long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+      string fileName = "photo_" + timeStamp;
+      // string fileName = Guid.NewGuid().ToString(); // Alternative file name
+      var uploads = Path.Combine(mainPath, @"uploads/products/");
+      var extension = Path.GetExtension(files[0].FileName);
+      // Console.WriteLine($"file={fileName} | extension={extension}");
+      using var fileSteams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create);
+      files[0].CopyTo(fileSteams);
+
+      ProductosFotos productoFoto = new() {
+        Nombre = fileName + extension,
+        Producto = _context.Productos.Find(model.ProductoFoto.ProductoId)
+      };
+
+      _context.ProductosFotos.Add(productoFoto);
+      await _context.SaveChangesAsync();
+
+      FlashClass = "success";
+      FlashMessage = "Product image upload successfully";
+
+      return RedirectToAction(nameof(ProductPhotosList));
+    }
+
+    var product = _context.Productos.Find(id);
+    if (product == null) return NotFound();
+
+    ProductoFotoViewModel viewModel = new() { ProductoFoto = new() };
+
+    ViewBag.Name = product.Nombre;
+    ViewBag.Id = id;
+
+    viewModel.ProductoFotos = await _context.ProductosFotos.Where(p => p.ProductoId == id).ToListAsync();
+
+    return View(viewModel);
+  }
+
+
 
 }
