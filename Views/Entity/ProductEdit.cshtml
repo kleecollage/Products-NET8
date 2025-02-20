@@ -1,6 +1,6 @@
 @model Web.Models.ViewModel
 @{
-  ViewData["Title"] = "Product Add";
+  ViewData["Title"] = "Product Edit";
   string FlashClass = (string) TempData["FlashClass"];
   string FlashMessage = (string) TempData["FlashMessage"];
 }
@@ -10,11 +10,11 @@
     <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
     <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="Index">Entity Framework</a></li>
     <li class="breadcrumb-item"><a asp-controller="Entity" asp-action="ProductsPagination" asp-route-pageNumber=1>All Products</a></li>
-    <li class="breadcrumb-item active" aria-current="page">New Product</li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
   </ol>
 </nav>
 
-<h2 class="text-center">Add Product</h2>
+<h2 class="text-center">Edit Product</h2>
 
 @if (FlashClass != null)
 {
@@ -27,7 +27,7 @@
 }
 
 <div class="row">
-  <form asp-controller="Entity" asp-action="ProductAdd" method="post">
+  <form asp-controller="Entity" asp-action="ProductEdit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
@@ -79,8 +79,9 @@
     </div>
 
     <hr />
+    <input type="hidden" asp-for="Producto.Id">
     <button type="submit" class="btn btn-primary">
-      <i class="fas fa-plus"></i> Add Product
+      <i class="fas fa-plus"></i> Edit Product
     </button>
   </form>
 </div>

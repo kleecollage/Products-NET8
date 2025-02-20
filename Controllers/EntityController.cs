@@ -231,4 +231,61 @@ public class EntityController(ApplicationDbContext context) : Controller
 
     return View(model);
   }
+
+  [Route("/entity/product/edit/{id}")]
+  public IActionResult ProductEdit(int id)
+  {
+    var product = _context.Productos.Find(id);
+    if (product == null) return NotFound();
+
+    ViewModel model = new()
+    {
+        Producto = product,
+        Categorias = _context.Categorias.Select(c => new SelectListItem() {
+          Text = c.Nombre,
+          Value = c.Id.ToString()
+        })
+    };
+
+    return View(model);
+  }
+
+  [HttpPost]
+  [Route("/entity/product/edit/{id}")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> ProductEdit(ViewModel model)
+  {
+    var productUpdate = _context.Productos.Find(model.Producto.Id);
+    if (productUpdate == null) return NotFound();
+
+    if (ModelState.IsValid)
+    {
+      productUpdate.Categoria = _context.Categorias.Find(model.Producto.CategoriaId);
+      productUpdate.Nombre = model.Producto.Nombre;
+      productUpdate.Slug = new SlugHelper().GenerateSlug(model.Producto.Nombre);
+      productUpdate.Precio = model.Producto.Precio;
+      productUpdate.Stock = model.Producto.Stock;
+      productUpdate.Descripcion = model.Producto.Descripcion;
+
+      _context.Update(productUpdate);
+      await _context.SaveChangesAsync();
+
+      FlashClass = "success";
+      FlashMessage = "Product updated successfully";
+
+      return RedirectToAction(nameof(ProductEdit));
+    }
+    
+    ViewModel viewModel = new()
+    {
+        Producto = productUpdate,
+        Categorias = _context.Categorias.Select(c => new SelectListItem() {
+          Text = c.Nombre,
+          Value = c.Id.ToString()
+        })
+    };
+
+    return View(viewModel);
+  }
+
 }

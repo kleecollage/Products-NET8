@@ -48,10 +48,8 @@
 @* /SEARCH ENGINE *@
 
 <h2 class="text-center">Products List With Pagination</h2>
-<p>Total Pages: @total</p>
 
 <div class="row">
-
   @* Add Product Button *@
   <p class="d-flex justify-content-end">
     <a asp-controller="Entity" asp-action="ProductAdd" class="btn btn-success">
@@ -156,7 +154,7 @@
     {
       <p>No Records</p>
     }
-
+    <p>Total Pages: @total</p>
   </div>
 
 </div>
