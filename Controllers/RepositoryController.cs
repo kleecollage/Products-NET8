@@ -40,6 +40,7 @@ public class RepositoryController: Controller
 
   [HttpPost]
   [Route("/repository-pattern/themes/add")]
+  [ValidateAntiForgeryToken]
   public IActionResult ThemeAdd(Tematica model)
   {
     if (ModelState.IsValid)
@@ -57,6 +58,38 @@ public class RepositoryController: Controller
     }
 
     return View();
+  }
+
+  [Route("/repository-pattern/themes/edit/{id}")]
+  public IActionResult ThemeEdit(int id)
+  {
+    var theme = _tematicaRepository.GetById(id);
+    if (theme == null) return NotFound();
+
+    return View(theme);
+  }
+
+  [HttpPost]
+  [Route("/repository-pattern/themes/edit/{id}")]
+  [ValidateAntiForgeryToken]
+  public IActionResult ThemeEdit(Tematica model)
+  {
+    var theme = _tematicaRepository.GetById(model.Id);
+    if (theme == null) return NotFound();
+
+    if (ModelState.IsValid)
+    {
+      theme.Nombre = model.Nombre;
+      theme.Slug = new SlugHelper().GenerateSlug(model.Nombre);
+      _tematicaRepository.Update(theme);
+
+      FlashClass = "success";
+      FlashMessage = "Theme Updated Successfully";
+
+      return RedirectToAction(nameof(ThemeEdit));
+    }
+
+    return View(theme);
   }
 
 
