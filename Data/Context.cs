@@ -3,11 +3,12 @@ using Web.Models;
 
 namespace Web.Data;
 
-public class ApplicationDbContext: DbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-  public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options) { }
-
   public DbSet<Categoria> Categorias { get; set; }
   public DbSet<Producto> Productos { get; set; }
   public DbSet<ProductosFotos> ProductosFotos { get; set; }
+  public DbSet<Tematica> Tematicas { get; set; }
+  public DbSet<Pelicula> Peliculas { get; set; }
+  public DbSet<PeliculaFoto> PeliculaFotos { get; set; }
 }
