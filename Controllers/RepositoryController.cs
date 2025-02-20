@@ -93,4 +93,19 @@ public class RepositoryController: Controller
   }
 
 
+  [Route("/repository-pattern/theme/delete/{id}")]
+  public IActionResult ThemeDelete(int id)
+  {
+    var theme = _tematicaRepository.GetById(id);
+    if (theme == null) return NotFound();
+
+    _tematicaRepository.Delete(id);
+
+    FlashClass = "success";
+    FlashMessage = "Theme Deleted Successfully";
+
+    return RedirectToAction(nameof(ThemesList));
+  }
+
+
 }

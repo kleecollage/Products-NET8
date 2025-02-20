@@ -5,8 +5,6 @@
   string FlashMessage = (string) TempData["FlashMessage"];
 }
 
-<h2 class="text-center">Themes List</h2>
-
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
@@ -14,6 +12,8 @@
     <li class="breadcrumb-item active" aria-current="page">Themes</li>
   </ol>
 </nav>
+
+<h2 class="text-center">Themes List</h2>
 
 @if (FlashClass != null)
 {
@@ -57,7 +57,7 @@
                 <i class="fas fa-edit"></i> Edit
               </a> &nbsp;
                 <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
-                    ,'/repository/theme/delete/@theme.Id')" class="btn btn-danger">
+                    ,'/repository-pattern/theme/delete/@theme.Id')" class="btn btn-danger">
                   <i class="fas fa-trash-alt"></i> Delete
                 </a>
             </td>
