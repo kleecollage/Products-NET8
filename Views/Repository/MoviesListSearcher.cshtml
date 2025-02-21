@@ -1,0 +1,160 @@
+@model Web.Models.PeliculaViewModel
+@{
+  ViewData["Title"] = "Movies List";
+  string FlashClass = (string)TempData["FlashClass"];
+  string FlashMessage = (string)TempData["FlashMessage"];
+  var search = ViewData["search"];
+  string url = $"/repository-pattern/movies-search?search={search}";
+  int previous = Model.PagingInfo.CurrentPage - 1;
+  int next = Model.PagingInfo.CurrentPage + 1;
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Repository" asp-action="Index">Repository Pattern</a></li>
+    <li class="breadcrumb-item">
+      <a asp-controller="Repository" asp-action="MoviesList" asp-route-page=1>All Movies</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Results for: @search</li>
+  </ol>
+</nav>
+
+
+@* Search Bar *@
+<div class="row">
+  <div class="col-6">&nbsp;</div>
+  <div class="col-6">
+    <form name="form_search" action="/repository-pattern/movies-search" method="get">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search ..." name="search" id="search" />
+        <input type="hidden" name="page" value="1" />
+        <span class="input-group-text" id="basic-addon2">
+          <a href="javascript:void(0);" class="btn" onclick="searchEngine();">
+            <i class="fas fa-search"></i>
+          </a>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
+@* /Search Bar *@
+<hr />
+<h2 class="text-center">Results for: @search</h2>
+@* Flash Messages *@
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+@* /Flash Messages *@
+@* Add movie button *@
+<div class="row">
+  <p class="d-flex justify-content-end">
+    <a asp-controller="Repository" asp-action="MovieAdd" class="btn btn-success">
+      <i class="fas fa-plus"></i> Add
+    </a>
+  </p>
+</div>
+@* /Add movie button *@
+<div class="table-responsive">
+  @if (Model.PagingInfo.TotalItems > 0)
+  {
+    <table class="table table-dark table-striped table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Category</th>
+          <th scope="col">Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Images</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var movie in Model.Peliculas)
+        {
+          <tr>
+            <td scope="row">@Html.DisplayFor(m => movie.Id)</td>
+            <td>
+              <a href="@url-by-theme/@movie.TematicaId">@Html.DisplayFor(m => movie.Tematica.Nombre)</a>
+            </td>
+            <td>@Html.DisplayFor(m => movie.Nombre)</td>
+            <td>@movie.Descripcion.ToString().Substring(
+              0, (movie.Descripcion.Length > 50) ? 50 : movie.Descripcion.Length)...
+            </td>
+            <td>
+              <a asp-controller="Repository" asp-action="MoviePhotosList" asp-route-id="@movie.Id">
+                <i class="fas fa-camera"></i> Images
+              </a>
+            </td>
+            <td class="text-center">
+              <a asp-controller="Repository" asp-action="MoviesListByTheme" asp-route-id="@movie.Id" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+              </a> &nbsp;
+              <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
+                            ,'/repository-pattern/movies/delete/@movie.Id')" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Delete
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @* Pagination *@
+    <hr />
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        @* FIRST PAGE *@
+        <li class="page-item">
+          <a href="@url?page=1" class="page-link" title="First">
+            <i class="fas fa-long-arrow-alt-left"></i> <i class="fas fa-long-arrow-alt-left"></i>
+          </a>
+        </li>
+        @* PREVIOUS PAGE *@
+        <li class="page-item">
+          <a href="@url?page=@previous"  title="Previous"
+            class="page-link btn  btn-default @((int)Model.PagingInfo.CurrentPage > 1 ? "" : "disabled")">
+            <i class="fas fa-long-arrow-alt-left"></i>
+          </a>
+        </li>
+
+        @* NUMERIC PAGES *@
+        @for (int i = 1; i <= ViewBag.Pages; i++)
+        {
+          <li class="page-item @((int)Model.PagingInfo.CurrentPage == i ? "active" : "")">
+            <a href="@url&page=@i" class="page-link" title="Page @i">
+              @i
+            </a>
+          </li>
+        }
+        @* /NUMERIC PAGES *@
+
+        @* NEXT PAGE *@
+        <li class="page-item">
+          <a href="@url?page=@next" title="Next"
+            class="page-link btn btn-default @((int)Model.PagingInfo.CurrentPage == @ViewBag.Pages ? "disabled" : "")">
+            <i class="fas fa-long-arrow-alt-right"></i>
+          </a>
+        </li>
+        @* LAST PAGE *@
+        <li class="page-item">
+          <a href="@url?page=@ViewBag.Pages" class="page-link" title="Last">
+            <i class="fas fa-long-arrow-alt-right"></i> <i class="fas fa-long-arrow-alt-right"></i>
+          </a>
+        </li>
+      </ul>
+      <p>Total Pages: @ViewBag.Pages</p>
+    </nav>
+    @* / Pagination *@
+  }
+  else
+  {
+    <p class="alert-warning text-center">No Records</p>
+  }
+</div>
+</div>

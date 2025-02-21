@@ -152,7 +152,7 @@ public class RepositoryController: Controller
     };
     pages = (rest >= 1) ? pages +1 : pages;
     ViewBag.Pages = pages;
-    ViewBag.Pages=pages;
+
     ViewData["theme"] = theme.Nombre;
     ViewData["theme_id"] = theme.Id;
 
@@ -167,7 +167,10 @@ public class RepositoryController: Controller
     var pages = count / pageSize;
     var rest = count % pageSize;
     var data = _movieRepository.GetPagedMovieSearcher(search, page, pageSize);
+
     pages = (rest >= 1) ? pages +1 : pages;
+    ViewBag.Pages = pages;
+    ViewData["search"] = search;
 
     var viewModel = new PeliculaViewModel {
       Peliculas = data,
@@ -178,8 +181,7 @@ public class RepositoryController: Controller
       }
     };
 
-    ViewBag.Pages = pages;
-    ViewBag.Pages=pages;
+
 
     return View(viewModel);
   }
