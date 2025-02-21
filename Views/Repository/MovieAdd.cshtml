@@ -1,0 +1,63 @@
+@model Web.Models.PeliculaCrearEditarViewModel
+@{
+  ViewData["Title"] = "Pelicula Add";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Repository" asp-action="Index">Repository Pattern</a></li>
+    <li class="breadcrumb-item">
+      <a asp-controller="Repository" asp-action="MoviesList" asp-route-page=1>All Movie</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">New Movie</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Add New Movie</h2>
+
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<div class="row">
+  <form asp-controller="Repository" asp-action="MovieAdd" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+      <label asp-for="Pelicula.TematicaId" class="control-label"></label>
+      <select asp-for="Pelicula.TematicaId" type="text" class="form-control">
+        @foreach(var theme in Model.Tematica)
+        {
+          <option value="@theme.Value">@theme.Text</option>
+        }
+      </select>
+      <span asp-validation-for="Pelicula.TematicaId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label asp-for="Pelicula.Nombre" class="control-label"></label>
+      <input asp-for="Pelicula.Nombre" type="text" class="form-control" placeholder="Enter movie title">
+      <span asp-validation-for="Pelicula.Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label asp-for="Pelicula.Descripcion" class="control-label"></label>
+      <textarea asp-for="Pelicula.Descripcion" class="form-control" placeholder="Enter product description"></textarea>
+      <span asp-validation-for="Pelicula.Descripcion" class="text-danger"></span>
+    </div>
+
+    <hr />
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Add Movie
+    </button>
+  </form>
+</div>

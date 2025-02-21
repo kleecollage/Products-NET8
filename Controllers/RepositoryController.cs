@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Slugify;
 using Web.Data;
 using Web.Models;
@@ -160,7 +161,7 @@ public class RepositoryController: Controller
   }
 
   [Route("/repository-pattern/movies-search")]
-  public async Task<ActionResult> MoviesListSearcher([FromQuery(Name = "search")] string search, int page = 1)
+  public ActionResult MoviesListSearcher([FromQuery(Name = "search")] string search, int page = 1)
   {
     var pageSize = 5;
     var count = _movieRepository.GetAllSearcher(search).Count();
@@ -181,7 +182,55 @@ public class RepositoryController: Controller
       }
     };
 
+    return View(viewModel);
+  }
 
+  [Route("/repository-pattern/movies/add")]
+  public ActionResult MovieAdd()
+  {
+    PeliculaCrearEditarViewModel model = new() {
+      Pelicula = new Pelicula(),
+      Tematica = _tematicaRepository.GetAll().Select(m => new SelectListItem()
+        {
+          Text = m.Nombre,
+          Value = m.Id.ToString()
+        })
+    };
+
+    return View(model);
+  }
+
+  [HttpPost]
+  [Route("/repository-pattern/movies/add")]
+  [ValidateAntiForgeryToken]
+  public ActionResult MovieAdd(PeliculaCrearEditarViewModel model)
+  {
+    if (ModelState.IsValid)
+    {
+      Tematica theme = _tematicaRepository.GetById((int)model.Pelicula.TematicaId);
+      Pelicula insert = new Pelicula {
+        Nombre = model.Pelicula.Nombre,
+        Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre),
+        Descripcion = model.Pelicula.Descripcion,
+        Tematica = theme,
+        Fecha = DateTime.Now
+      };
+      _movieRepository.Add(insert);
+
+      FlashClass = "success";
+      FlashMessage = "Movie added successfully";
+
+      return RedirectToAction(nameof(MovieAdd));
+    }
+
+    PeliculaCrearEditarViewModel viewModel = new() {
+      Pelicula = new Pelicula(),
+      Tematica = _tematicaRepository.GetAll().Select(m => new SelectListItem()
+        {
+          Text = m.Nombre,
+          Value = m.Id.ToString()
+        })
+    };
 
     return View(viewModel);
   }
