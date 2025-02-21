@@ -50,7 +50,7 @@
 @* Add movie button *@
 <div class="row">
   <p class="d-flex justify-content-end">
-    <a asp-controller="Repository" asp-action="MovieAdd" class="btn btn-success">
+    <a asp-controller="Repository" asp-action="MovieSave" class="btn btn-success">
       <i class="fas fa-plus"></i> Add
     </a>
   </p>
@@ -88,7 +88,7 @@
               </a>
             </td>
             <td class="text-center">
-              <a asp-controller="Repository" asp-action="MovieEdit" asp-route-id="@movie.Id" class="btn btn-warning">
+              <a asp-controller="Repository" asp-action="MovieSave" asp-route-id="@movie.Id" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit
               </a> &nbsp;
               <a href="#" onclick="confirmSweet('Do you really want to delete this record?'

@@ -12,11 +12,11 @@
     <li class="breadcrumb-item">
       <a asp-controller="Repository" asp-action="MoviesList" asp-route-page=1>All Movies</a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">Update Movie</li>
+    <li class="breadcrumb-item active" aria-current="page">@ViewBag.FormTitle Movie</li>
   </ol>
 </nav>
 
-<h2 class="text-center">Update Movie</h2>
+<h2 class="text-center">@ViewBag.FormTitle Movie</h2>
 
 @if (FlashClass != null)
 {
@@ -29,18 +29,13 @@
 }
 
 <div class="row">
-  <form asp-controller="Repository" asp-action="MovieEdit" method="post">
+  <form asp-controller="Repository" asp-action="MovieSave" method="post">
     <input type="hidden" asp-for="Pelicula.Id" />
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
       <label asp-for="Pelicula.TematicaId" class="control-label"></label>
-      <select asp-for="Pelicula.TematicaId" type="text" class="form-control">
-        @foreach(var theme in Model.Tematica)
-        {
-          <option value="@theme.Value">@theme.Text</option>
-        }
-      </select>
+      <select asp-for="Pelicula.TematicaId" type="text" class="form-control" asp-items="Model.Tematica"></select>
       <span asp-validation-for="Pelicula.TematicaId" class="text-danger"></span>
     </div>
 
@@ -58,7 +53,7 @@
 
     <hr />
     <button type="submit" class="btn btn-primary">
-      <i class="fas fa-plus"></i> Update
+      <i class="fas fa-plus"></i> @ViewBag.FormTitle
     </button>
   </form>
 </div>

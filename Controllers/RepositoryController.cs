@@ -95,7 +95,6 @@ public class RepositoryController: Controller
     return View(theme);
   }
 
-
   [Route("/repository-pattern/theme/delete/{id}")]
   public IActionResult ThemeDelete(int id)
   {
@@ -185,113 +184,167 @@ public class RepositoryController: Controller
     return View(viewModel);
   }
 
-  [Route("/repository-pattern/movies/add")]
-  public ActionResult MovieAdd()
+  // [Route("/repository-pattern/movies/add")]
+  // public ActionResult MovieAdd()
+  // {
+  //   PeliculaCrearEditarViewModel model = new() {
+  //     Pelicula = new Pelicula(),
+  //     Tematica = _tematicaRepository.GetAll().Select(m => new SelectListItem()
+  //       {
+  //         Text = m.Nombre,
+  //         Value = m.Id.ToString()
+  //       })
+  //   };
+
+  //   return View(model);
+  // }
+
+  // [HttpPost]
+  // [Route("/repository-pattern/movies/add")]
+  // [ValidateAntiForgeryToken]
+  // public ActionResult MovieAdd(PeliculaCrearEditarViewModel model)
+  // {
+  //   if (ModelState.IsValid)
+  //   {
+  //     Tematica theme = _tematicaRepository.GetById(model.Pelicula.TematicaId);
+  //     Pelicula insert = new Pelicula {
+  //       Nombre = model.Pelicula.Nombre,
+  //       Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre),
+  //       Descripcion = model.Pelicula.Descripcion,
+  //       Tematica = theme,
+  //       Fecha = DateTime.Now
+  //     };
+  //     _movieRepository.Add(insert);
+
+  //     FlashClass = "success";
+  //     FlashMessage = "Movie added successfully";
+
+  //     return RedirectToAction(nameof(MovieAdd));
+  //   }
+
+  //   PeliculaCrearEditarViewModel viewModel = new() {
+  //     Pelicula = new Pelicula(),
+  //     Tematica = _tematicaRepository.GetAll().Select(m => new SelectListItem()
+  //       {
+  //         Text = m.Nombre,
+  //         Value = m.Id.ToString()
+  //       })
+  //   };
+
+  //   return View(viewModel);
+  // }
+
+  // [Route("/repository-pattern/movie-edit/{id}")]
+  // public IActionResult MovieEdit(int id)
+  // {
+  //   var movie = _movieRepository.GetById(id);
+  //   if (movie == null) return NotFound();
+
+  //   PeliculaCrearEditarViewModel model = new() {
+  //     Pelicula = movie,
+  //     Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
+  //       {
+  //         Text = t.Nombre,
+  //         Value = t.Id.ToString()
+  //       })
+  //   };
+
+  //   return View (model);
+  // }
+
+  // [HttpPost]
+  // [Route("/repository-pattern/movie-edit/")]
+  // [ValidateAntiForgeryToken]
+  // public IActionResult MovieEdit(PeliculaCrearEditarViewModel model)
+  // {
+  //   Pelicula movie = _movieRepository.GetById(model.Pelicula.Id);
+
+  //   if (ModelState.IsValid)
+  //   {
+  //     if (movie == null) return NotFound();
+  //     movie.Tematica = _tematicaRepository.GetById(model.Pelicula.TematicaId);
+  //     movie.Nombre = model.Pelicula.Nombre;
+  //     movie.Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre);
+  //     movie.Descripcion = model.Pelicula.Descripcion;
+
+  //     _movieRepository.Update(movie);
+
+  //     FlashClass = "success";
+  //     FlashMessage = "Movie updated successfully";
+
+  //     return RedirectToAction(nameof(MovieEdit), new { id = movie.Id });
+  //   }
+
+  //   model = new() {
+  //     Pelicula = movie,
+  //     Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
+  //       {
+  //         Text = t.Nombre,
+  //         Value = t.Id.ToString()
+  //       })
+  //   };
+
+  //   return View (model);
+  // }
+  // -> 105 code lines <- //
+
+  [Route("repository-pattern/movie-save/{id?}")]
+  public IActionResult MovieSave(int? id)
   {
-    PeliculaCrearEditarViewModel model = new() {
-      Pelicula = new Pelicula(),
-      Tematica = _tematicaRepository.GetAll().Select(m => new SelectListItem()
-        {
-          Text = m.Nombre,
-          Value = m.Id.ToString()
-        })
+    ViewBag.FormTitle = id.HasValue ? "Update" : "Add";
+    PeliculaCrearEditarViewModel model = new()
+    {
+      Pelicula = id.HasValue ? _movieRepository.GetById(id.Value) : new Pelicula(),
+      Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
+      {
+          Text = t.Nombre,
+          Value = t.Id.ToString()
+      })
     };
+
+    if (id.HasValue && model.Pelicula == null) return NotFound();
 
     return View(model);
   }
 
   [HttpPost]
-  [Route("/repository-pattern/movies/add")]
+  [Route("repository-pattern/movie-save/{id?}")]
   [ValidateAntiForgeryToken]
-  public ActionResult MovieAdd(PeliculaCrearEditarViewModel model)
+  public IActionResult MovieSave(PeliculaCrearEditarViewModel model, int? id)
   {
     if (ModelState.IsValid)
     {
-      Tematica theme = _tematicaRepository.GetById(model.Pelicula.TematicaId);
-      Pelicula insert = new Pelicula {
-        Nombre = model.Pelicula.Nombre,
-        Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre),
-        Descripcion = model.Pelicula.Descripcion,
-        Tematica = theme,
-        Fecha = DateTime.Now
-      };
-      _movieRepository.Add(insert);
+        Tematica theme = _tematicaRepository.GetById(model.Pelicula.TematicaId);
+        Pelicula pelicula = model.Pelicula.Id > 0 ? _movieRepository.GetById(model.Pelicula.Id) : new Pelicula();
 
-      FlashClass = "success";
-      FlashMessage = "Movie added successfully";
+        pelicula.Nombre = model.Pelicula.Nombre;
+        pelicula.Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre);
+        pelicula.Descripcion = model.Pelicula.Descripcion;
+        pelicula.Tematica = theme;
+        pelicula.Fecha = DateTime.Now;
 
-      return RedirectToAction(nameof(MovieAdd));
+        if (model.Pelicula.Id > 0)
+        {
+            _movieRepository.Update(pelicula);
+            FlashMessage = "Movie updated successfully";
+        }
+        else
+        {
+            _movieRepository.Add(pelicula);
+            FlashMessage = "Movie added successfully";
+        }
+
+        FlashClass = "success";
+
+        return RedirectToAction(nameof(MovieSave));
     }
 
-    PeliculaCrearEditarViewModel viewModel = new() {
-      Pelicula = new Pelicula(),
-      Tematica = _tematicaRepository.GetAll().Select(m => new SelectListItem()
-        {
-          Text = m.Nombre,
-          Value = m.Id.ToString()
-        })
-    };
-
-    return View(viewModel);
-  }
-
-  [Route("/respository-pattern/movies/edit/{id}")]
-  public IActionResult MovieEdit(int id)
-  {
-    var movie = _movieRepository.GetById(id);
-    if (movie == null) return NotFound();
-
-    PeliculaCrearEditarViewModel model = new() {
-      Pelicula = movie,
-      Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
-        {
-          Text = t.Nombre,
-          Value = t.Id.ToString()
-        })
-    };
-
-    return View (model);
-  }
-
-  [HttpPost]
-  [Route("/respository-pattern/movies/edit/{id}")]
-  [ValidateAntiForgeryToken]
-  public IActionResult MovieEdit(PeliculaCrearEditarViewModel model)
-  {
-    var movie = _movieRepository.GetById(model.Pelicula.Id);
-    if (movie == null) return NotFound();
-
-    if (ModelState.IsValid)
-    {
-      Tematica theme = _tematicaRepository.GetById(model.Pelicula.TematicaId);
-      Pelicula insert = new()
+    model.Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
       {
-        Nombre = model.Pelicula.Nombre,
-        Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre),
-        Descripcion = model.Pelicula.Descripcion,
-        Tematica = theme,
-        Fecha = DateTime.Now
-      };
-      _movieRepository.Add(insert);
-
-      FlashClass = "success";
-      FlashMessage = "Movie updated successfully";
-
-      return RedirectToAction(nameof(MovieEdit));
-    }
-
-    model = new() {
-      Pelicula = new Pelicula(),
-      Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
-        {
           Text = t.Nombre,
           Value = t.Id.ToString()
-        })
-    };
+      });
 
-    return View (model);
-  }
-
-
-
+    return View(model);
+  } // 56 lines (49 lines + 1 view saved) //
 }

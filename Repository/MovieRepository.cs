@@ -25,7 +25,7 @@ public class MovieRepository(ApplicationDbContext context): IMovieRepository<Pel
 
   public void Update(Pelicula entity)
   {
-    _context.Entry(entity).State = EntityState.Modified;
+    _context.Entry(entity).CurrentValues.SetValues(entity);
     _context.SaveChanges();
   }
 
