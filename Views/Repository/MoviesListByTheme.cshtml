@@ -53,7 +53,7 @@
 @* Add movie button *@
 <div class="row">
   <p class="d-flex justify-content-end">
-    <a asp-controller="Repository" asp-action="MovieAdd" class="btn btn-success">
+    <a asp-controller="Repository" asp-action="MovieSave" class="btn btn-success">
       <i class="fas fa-plus"></i> Add
     </a>
   </p>
@@ -84,16 +84,16 @@
               0, (movie.Descripcion.Length > 50) ? 50 : movie.Descripcion.Length)...
             </td>
             <td>
-              <a asp-action="MoviePhotosList" asp-controller="Repository" asp-route-id="@movie.Id">
+              <a asp-action="MovieImagesList" asp-controller="Repository" asp-route-id="@movie.Id">
                 <i class="fas fa-camera"></i> Images
               </a>
             </td>
             <td class="text-center">
-              <a asp-controller="Repository" asp-action="MovieEdit" asp-route-id="@movie.Id" class="btn btn-warning">
+              <a asp-controller="Repository" asp-action="MovieSave" asp-route-id="@movie.Id" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit
               </a> &nbsp;
               <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
-                            ,'/repository-pattern/movies/delete/@movie.Id')" class="btn btn-danger">
+                            ,'/repository-pattern/movie-delete/@movie.Id')" class="btn btn-danger">
                 <i class="fas fa-trash-alt"></i> Delete
               </a>
             </td>

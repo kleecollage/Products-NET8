@@ -1,0 +1,78 @@
+@model Web.Models.PeliculaFotoViewModel
+@{
+  ViewData["Title"] = "Repository Pattern";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Repository" asp-action="Index">Repository Pattern</a></li>
+    <li class="breadcrumb-item">
+      <a asp-controller="Repository" asp-action="MoviesList" asp-route-page=1>All Movies</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Images Of: @ViewBag.Name</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Images Of: @ViewBag.Name</h2>
+@* Flash Message *@
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+@* /Flash Message *@
+
+<form asp-controller="Repository" asp-action="MovieImagesList" method="post" name="form" enctype="multipart/form-data">
+  <div class="text-danger" asp-validation-summary="All"></div>
+  <div class="row">
+    <div class="form-group">
+      <label asp-for="PeliculaFoto.Nombre">Image</label>
+      <input type="file" name="files" id="uploadFile" class="form-control">
+    </div>
+  </div>
+  <hr />
+  <input type="hidden" asp-for="@Model.PeliculaFoto.PeliculaId" value="@ViewBag.Id" />
+  <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Upload Image </button>
+</form>
+<hr />
+<div class="row d-flex justify-content-center">
+  <div class="table-responsive col-md-7">
+    @if(Model.PeliculaFotos.Count() == 0)
+    {
+      <p class="alert alert-warning text-center">No Movie Images Registered</p>
+    }
+    else {
+      <table class="table table-dark table-bordered table-striped table-hover" >
+      <thead>
+        <tr class="text-center align-middle">
+          <th scope="col">Image</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var image in Model.PeliculaFotos)
+        {
+          <tr class="text-center align-middle">
+            <td>
+              <img src="~/uploads/movies/@image.Nombre" width="300" alt="Movie Image">
+            </td>
+            <td>
+              <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
+                        ,'/repository-pattern/movie-image-delete/@image.Id')" class="btn btn-danger py-5 px-3">
+                <i class="fas fa-trash-alt"></i> Delete
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    }
+  </div>
+</div>

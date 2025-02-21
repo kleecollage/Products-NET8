@@ -10,5 +10,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
   public DbSet<ProductosFotos> ProductosFotos { get; set; }
   public DbSet<Tematica> Tematicas { get; set; }
   public DbSet<Pelicula> Peliculas { get; set; }
-  public DbSet<PeliculaFoto> PeliculaFotos { get; set; }
+  public DbSet<PeliculaFoto> PeliculasFotos { get; set; }
 }

@@ -83,7 +83,7 @@
               0, (movie.Descripcion.Length > 50) ? 50 : movie.Descripcion.Length)...
             </td>
             <td>
-              <a asp-controller="Repository" asp-action="MoviePhotosList" asp-route-id="@movie.Id">
+              <a asp-controller="Repository" asp-action="MovieImagesList" asp-route-id="@movie.Id">
                 <i class="fas fa-camera"></i> Images
               </a>
             </td>
@@ -92,7 +92,7 @@
                 <i class="fas fa-edit"></i> Edit
               </a> &nbsp;
               <a href="#" onclick="confirmSweet('Do you really want to delete this record?'
-                            ,'/repository-pattern/movies/delete/@movie.Id')" class="btn btn-danger">
+                            ,'/repository-pattern/movie-delete/@movie.Id')" class="btn btn-danger">
                 <i class="fas fa-trash-alt"></i> Delete
               </a>
             </td>

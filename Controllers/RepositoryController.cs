@@ -12,6 +12,7 @@ public class RepositoryController: Controller
   private readonly IWebHostEnvironment _hostingEnvironmet;
   private readonly TematicaRepository _tematicaRepository;
   private readonly MovieRepository _movieRepository;
+  private readonly MoviePhotoRepository _moviePhotoRepository;
   [TempData] public string FlashClass { get; set; }
   [TempData] public string FlashMessage { get; set; }
 
@@ -20,6 +21,7 @@ public class RepositoryController: Controller
     _hostingEnvironmet = hostingEnvironmet;
     _tematicaRepository = new TematicaRepository(context);
     _movieRepository = new MovieRepository(context);
+    _moviePhotoRepository = new MoviePhotoRepository(context);
   }
 
   [Route("/repository-pattern")]
@@ -347,4 +349,80 @@ public class RepositoryController: Controller
 
     return View(model);
   } // 56 lines (49 lines + 1 view saved) //
+
+  [Route("repository-pattern/movie-delete/{id}")]
+  public IActionResult MovieDelete(int id)
+  {
+    var movieSelected = _movieRepository.GetById(id);
+    if (movieSelected == null) return NotFound();
+
+    _movieRepository.Delete(id);
+
+    FlashClass = "success";
+    FlashMessage = "Movie Deleted Successfully";
+
+    return RedirectToAction(nameof(MoviesList));
+  }
+
+  [Route("repository-pattern/movie-images/{id}")]
+  public IActionResult MovieImagesList(int id)
+  {
+    var data = _movieRepository.GetById(id);
+    if (data == null) return NotFound();
+
+    ViewBag.Name = data.Nombre;
+    ViewBag.Id = data.Id;
+
+    PeliculaFotoViewModel model = new(){
+      PeliculaFoto = new(),
+      PeliculaFotos = _moviePhotoRepository.GetPhotosByMovie(id)
+    };
+
+    return View(model);
+  }
+
+  [HttpPost]
+  [Route("repository-pattern/movie-images/{id}")]
+  [ValidateAntiForgeryToken]
+  public IActionResult MovieImagesList(int id, PeliculaFotoViewModel model)
+  {
+    var data = _movieRepository.GetById(id);
+    if (data == null) return NotFound();
+
+    ViewBag.Name = data.Nombre;
+    ViewBag.Id = data.Id;
+
+    if (ModelState.IsValid)
+    {
+      string mainPath = _hostingEnvironmet.WebRootPath;
+      var files = HttpContext.Request.Form.Files;
+      string fileName = Guid.NewGuid().ToString();
+      var uploads = Path.Combine(mainPath, @"uploads/movies");
+      var extension = Path.GetExtension(files[0].FileName);
+      using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+      {
+        files[0].CopyTo(fileStreams);
+      }
+
+      PeliculaFoto insert  = new() {
+        Nombre = fileName + extension,
+        Pelicula = data
+      };
+      _moviePhotoRepository.Add(insert);
+
+      FlashClass = "success";
+      FlashMessage = "Movie Image Uploaded Successfully";
+
+      return RedirectToAction(nameof(MovieImagesList));
+    }
+
+    model = new(){
+      PeliculaFoto = new(),
+      PeliculaFotos = _moviePhotoRepository.GetPhotosByMovie(id)
+    };
+
+    return View(model);
+  }
+
+
 }
