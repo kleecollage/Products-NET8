@@ -207,7 +207,7 @@ public class RepositoryController: Controller
   {
     if (ModelState.IsValid)
     {
-      Tematica theme = _tematicaRepository.GetById((int)model.Pelicula.TematicaId);
+      Tematica theme = _tematicaRepository.GetById(model.Pelicula.TematicaId);
       Pelicula insert = new Pelicula {
         Nombre = model.Pelicula.Nombre,
         Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre),
@@ -233,6 +233,63 @@ public class RepositoryController: Controller
     };
 
     return View(viewModel);
+  }
+
+  [Route("/respository-pattern/movies/edit/{id}")]
+  public IActionResult MovieEdit(int id)
+  {
+    var movie = _movieRepository.GetById(id);
+    if (movie == null) return NotFound();
+
+    PeliculaCrearEditarViewModel model = new() {
+      Pelicula = movie,
+      Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
+        {
+          Text = t.Nombre,
+          Value = t.Id.ToString()
+        })
+    };
+
+    return View (model);
+  }
+
+  [HttpPost]
+  [Route("/respository-pattern/movies/edit/{id}")]
+  [ValidateAntiForgeryToken]
+  public IActionResult MovieEdit(PeliculaCrearEditarViewModel model)
+  {
+    var movie = _movieRepository.GetById(model.Pelicula.Id);
+    if (movie == null) return NotFound();
+
+    if (ModelState.IsValid)
+    {
+      Tematica theme = _tematicaRepository.GetById(model.Pelicula.TematicaId);
+      Pelicula insert = new()
+      {
+        Nombre = model.Pelicula.Nombre,
+        Slug = new SlugHelper().GenerateSlug(model.Pelicula.Nombre),
+        Descripcion = model.Pelicula.Descripcion,
+        Tematica = theme,
+        Fecha = DateTime.Now
+      };
+      _movieRepository.Add(insert);
+
+      FlashClass = "success";
+      FlashMessage = "Movie updated successfully";
+
+      return RedirectToAction(nameof(MovieEdit));
+    }
+
+    model = new() {
+      Pelicula = new Pelicula(),
+      Tematica = _tematicaRepository.GetAll().Select(t => new SelectListItem()
+        {
+          Text = t.Nombre,
+          Value = t.Id.ToString()
+        })
+    };
+
+    return View (model);
   }
 
 
