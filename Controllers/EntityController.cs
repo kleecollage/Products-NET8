@@ -12,13 +12,8 @@ public class EntityController(ApplicationDbContext context, IWebHostEnvironment 
 {
   private readonly ApplicationDbContext _context = context;
   private readonly IWebHostEnvironment _hostingEnvironment = hostEnvironment;
-
-  // Attributes for flash messages
-  [TempData]
-  public string FlashClass { get; set; }
-
-  [TempData]
-  public string FlashMessage { get; set; }
+  [TempData] public string FlashClass { get; set; }
+  [TempData] public string FlashMessage { get; set; }
 
   [Route("/entity")]
   public IActionResult Index()
@@ -388,6 +383,4 @@ public class EntityController(ApplicationDbContext context, IWebHostEnvironment 
 
     return RedirectToAction("ProductPhotosList", "Entity", new {id = product_id});
   }
-
-
 }

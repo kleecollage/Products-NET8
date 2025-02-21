@@ -424,5 +424,27 @@ public class RepositoryController: Controller
     return View(model);
   }
 
+  [Route("repository-pattern/movie-image-delete/{id}")]
+  public IActionResult MovieImageDelete(int id)
+  {
+    var image = _moviePhotoRepository.GetById(id);
+    if (image == null) return NotFound();
+
+    var photo_id = image.PeliculaId;
+    var photo = image.Nombre;
+
+    _moviePhotoRepository.Delete(id);
+
+    string mainPath = _hostingEnvironmet.WebRootPath;
+    var pathImage = Path.Combine(mainPath, @"uploads/movies/" + photo);
+
+    if (System.IO.File.Exists(pathImage)) System.IO.File.Delete(pathImage);
+
+    FlashClass = "success";
+    FlashMessage = "Image Remove Successfully";
+
+    return RedirectToAction("MovieImagesList", "Repository", new {id = photo_id});
+  }
+
 
 }

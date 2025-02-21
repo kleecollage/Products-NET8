@@ -30,6 +30,7 @@
 @* /Flash Message *@
 
 <form asp-controller="Repository" asp-action="MovieImagesList" method="post" name="form" enctype="multipart/form-data">
+  <input type="hidden" asp-for="@Model.PeliculaFoto.PeliculaId" value="@ViewBag.Id" />
   <div class="text-danger" asp-validation-summary="All"></div>
   <div class="row">
     <div class="form-group">
@@ -38,7 +39,6 @@
     </div>
   </div>
   <hr />
-  <input type="hidden" asp-for="@Model.PeliculaFoto.PeliculaId" value="@ViewBag.Id" />
   <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Upload Image </button>
 </form>
 <hr />
