@@ -10,6 +10,7 @@ public class RepositoryController: Controller
 {
   private readonly IWebHostEnvironment _hostingEnvironmet;
   private readonly TematicaRepository _tematicaRepository;
+  private readonly MovieRepository _movieRepository;
   [TempData] public string FlashClass { get; set; }
   [TempData] public string FlashMessage { get; set; }
 
@@ -17,6 +18,7 @@ public class RepositoryController: Controller
   {
     _hostingEnvironmet = hostingEnvironmet;
     _tematicaRepository = new TematicaRepository(context);
+    _movieRepository = new MovieRepository(context);
   }
 
   [Route("/repository-pattern")]
@@ -106,6 +108,82 @@ public class RepositoryController: Controller
 
     return RedirectToAction(nameof(ThemesList));
   }
+
+  [Route("/repository-pattern/movies")]
+  public IActionResult MoviesList(int page = 1)
+  {
+    var pageSize = 5;
+    var count = _movieRepository.GetAll().Count();
+    var pages = count / pageSize;
+    var rest = count % pageSize;
+    var data = _movieRepository.GetPagedMovies(page, pageSize);
+    var viewModel = new PeliculaViewModel {
+      Peliculas = data,
+      PagingInfo = new() {
+        CurrentPage = page,
+        ItemsPerPage = pageSize,
+        TotalItems = data.Count()
+      }
+    };
+    pages = (rest >= 1) ? pages +1 : pages;
+    ViewBag.Pages = pages;
+
+    return View(viewModel);
+  }
+
+  [Route("/repository-pattern/movies-by-theme/{theme_id}")]
+  public IActionResult MoviesListByTheme(int theme_id, int page = 1)
+  {
+    var theme = _tematicaRepository.GetById(theme_id);
+    if (theme == null) return NotFound();
+
+    var pageSize = 5;
+    var count = _movieRepository.GetAllByTheme(theme_id).Count();
+    var pages = count / pageSize;
+    var rest = count % pageSize;
+    var data = _movieRepository.GetPagedMoviesByTheme(theme_id, page, pageSize);
+    var viewModel = new PeliculaViewModel {
+      Peliculas = data,
+      PagingInfo = new() {
+        CurrentPage = page,
+        ItemsPerPage = pageSize,
+        TotalItems = data.Count()
+      }
+    };
+    pages = (rest >= 1) ? pages +1 : pages;
+    ViewBag.Pages = pages;
+    ViewBag.Pages=pages;
+    ViewData["theme"] = theme.Nombre;
+    ViewData["theme_id"] = theme.Id;
+
+    return View(viewModel);
+  }
+
+  [Route("/repository-pattern/movies-search")]
+  public async Task<ActionResult> MoviesListSearcher([FromQuery(Name = "search")] string search, int page = 1)
+  {
+    var pageSize = 5;
+    var count = _movieRepository.GetAllSearcher(search).Count();
+    var pages = count / pageSize;
+    var rest = count % pageSize;
+    var data = _movieRepository.GetPagedMovieSearcher(search, page, pageSize);
+    pages = (rest >= 1) ? pages +1 : pages;
+
+    var viewModel = new PeliculaViewModel {
+      Peliculas = data,
+      PagingInfo = new() {
+        CurrentPage = page,
+        ItemsPerPage = pageSize,
+        TotalItems = data.Count()
+      }
+    };
+
+    ViewBag.Pages = pages;
+    ViewBag.Pages=pages;
+
+    return View(viewModel);
+  }
+
 
 
 }

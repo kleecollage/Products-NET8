@@ -54,7 +54,9 @@ public class MovieRepository(ApplicationDbContext context): IMovieRepository<Pel
         return [.. _context.Set<Pelicula>()
           .OrderByDescending(m => m.Id)
           .Skip((page -1) * pageSize)
-          .Take(pageSize).Include(x => x.Tematica)];
+          .Take(pageSize)
+          .Include(x => x.Tematica)
+          ];
     }
 
     public IEnumerable<Pelicula> GetPagedMoviesByTheme(int theme_id, int page, int pageSize)
@@ -63,7 +65,8 @@ public class MovieRepository(ApplicationDbContext context): IMovieRepository<Pel
           .Where(p => p.TematicaId == theme_id)
           .OrderByDescending(m => m.Id)
           .Skip((page -1) * pageSize)
-          .Take(pageSize).Include(x => x.Tematica)];
+          .Take(pageSize)
+          .Include(x => x.Tematica)];
     }
 
     public IEnumerable<Pelicula> GetPagedMovieSearcher(string search, int page, int pageSize)
@@ -72,7 +75,8 @@ public class MovieRepository(ApplicationDbContext context): IMovieRepository<Pel
           .Where(p => p.Nombre.Contains(search))
           .OrderByDescending(p => p.Id)
           .Skip((page - 1) * pageSize)
-          .Take(pageSize).Include(x => x.Tematica)];
+          .Take(pageSize)
+          .Include(x => x.Tematica)];
     }
 
 }
