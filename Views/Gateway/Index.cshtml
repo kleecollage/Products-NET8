@@ -1,0 +1,24 @@
+@{
+  ViewData["Title"] = "Payment Gateway";
+}
+<h2 class="text-center">Payment Gateway</h2>
+<ul>
+  <hr />
+  <li>
+    <a asp-controller="Gateway" asp-action="GatewayWebpay" class="p-2 link-secondary">
+      <i class="fas fa-dollar-sign"></i> Transbank Webpay
+    </a>
+  </li>
+  <hr />
+  <li>
+    <a asp-controller="Gateway" asp-action="PaypalGateway" class="p-2 link-secondary">
+      <i class="fab fa-paypal"></i> Paypal
+    </a>
+  </li>
+  <hr />
+  <li>
+    <a asp-controller="Gateway" asp-action="StripeGateway" class="p-2 link-secondary">
+      <i class="fab fa-stripe"></i> Stripe
+    </a>
+  </li>
+</ul>

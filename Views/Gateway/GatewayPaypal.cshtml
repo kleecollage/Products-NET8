@@ -1,0 +1,28 @@
+@model Web.Models.PaypalViewModel;
+@{
+  ViewData["Title"] = "Payment Gateways";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Gateway" asp-action="Index">Payment Gateways</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Paypal</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Webpay Gateway</h2>
+<ul>
+  <li><strong>Product:</strong> Coffe Table</li>
+  <li><strong>Value:</strong> $100.00</li>
+  <li><strong>Quantity:</strong> 2</li>
+  <li><strong>Buy Order:</strong> 34512</li>
+  <li><strong>URL: </strong> @Model.PaypalToken</li>
+  <li><strong>Token: </strong> @Model.PaypalToken</li>
+</ul>
+<form action="#" method="post" name="form">
+  <input type="hidden" name="token_ws" id="token_ws" value="@Model.PaypalToken" />
+  <a href="javascript:void(0);" onclick="document.form.submit()" class="btn btn-danger">
+    <i class="fas fa-dollar-sign"></i> Pay
+  </a>
+</form>

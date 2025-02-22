@@ -1,0 +1,29 @@
+@model Web.Models.WebpayRespuesta;
+@{
+  ViewData["Title"] = "Payment Gateways";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Gateway" asp-action="Index">Payment Gateways</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Gateway" asp-action="GatewayWebpay">Gateway Webpay</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Webpay Response</li>
+  </ol>
+</nav>
+
+<h1>Webpay Response</h1>
+<ul>
+  <li>VCI: <span>@Model.Vci</span> </li>
+  <li>amount: <span>@Model.Amount</span> </li>
+  <li>status: <span>@Model.Status</span> </li>
+  <li>buy_order: <span>@Model.Buy_Order</span> </li>
+  <li>session_id: <span>@Model.Session_Id</span> </li>
+  <li>card_detail: <span>@Model.Card_Detail.Card_Number</span> </li>
+  <li>accounting_date: <span>@Model.Accounting_Date</span> </li>
+  <li>transaction_date: <span>@Model.Transaction_Date</span> </li>
+  <li>authorization_code: <span>@Model.Authorization_Code</span> </li>
+  <li>payment_type_code: <span>@Model.Payment_Type_Code</span> </li>
+  <li>response_code: <span>@Model.Response_Code</span> </li>
+  <li>installments_number: <span>@Model.Installments_Number</span> </li>
+</ul>

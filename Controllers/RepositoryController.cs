@@ -445,6 +445,4 @@ public class RepositoryController: Controller
 
     return RedirectToAction("MovieImagesList", "Repository", new {id = photo_id});
   }
-
-
 }
