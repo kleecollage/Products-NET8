@@ -145,7 +145,7 @@ public class GatewayController: Controller
   }
 
   [Route("/gateways/paypal/cancel")]
-  public async Task<IActionResult> GateWayPaypalCancel([FromQuery(Name="token")] string token)
+  public IActionResult GateWayPaypalCancel([FromQuery(Name="token")] string token)
   {
     ViewBag.Token = token;
 

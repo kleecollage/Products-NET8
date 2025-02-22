@@ -12,4 +12,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
   public DbSet<Pelicula> Peliculas { get; set; }
   public DbSet<PeliculaFoto> PeliculasFotos { get; set; }
   public DbSet<VariableGlobal> VariablesGlobales { get; set; }
+  public DbSet<Usuario> Usuarios { get; set;}
 }
