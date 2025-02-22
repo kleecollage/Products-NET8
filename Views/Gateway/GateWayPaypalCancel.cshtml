@@ -1,4 +1,3 @@
-@model Web.Models.PaypalOrder;
 @{
   ViewData["Title"] = "Payment Gateways";
 }
@@ -14,7 +13,7 @@
 
 <h2 class="text-center">Gateway Paypal Implementation</h2>
 
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  Your payment was registered successfully, assosiated to order: <strong>@Model.Id</strong>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  Your order: <strong>@ViewBag.Token</strong> was cancelled.
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
