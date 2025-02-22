@@ -18,7 +18,7 @@ public class Usuario
   [Required(ErrorMessage = "This field is required")]
   public string Password { get; set; }
 
-  public string Estado { get; set; }
+  public int Estado { get; set; }
 
   public string Token { get; set; }
 }
