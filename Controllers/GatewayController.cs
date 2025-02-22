@@ -153,5 +153,69 @@ public class GatewayController: Controller
   }
 
 
-  // ########## PAYPAL ########## //
+  // ########## STRIPE ########## //
+  // https://dashboard.stripe.com/test/apikeys
+  // https://stripe.com/docs/testing?locale=es-419
+  // VISA Card 4242424242424242 -> https://docs.stripe.com/testing
+  // https://stripe.com/docs/api/products/create
+  // https://stripe.com/docs/api/prices/create
+  // https://stripe.com/docs/api/checkout/sessions/create
+  private async Task<StripeId> ReturnStripeId(string endpoint, Dictionary<string, string> data)
+  {
+    HttpClient client = new();
+    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_context.VariablesGlobales.Find(9).Valor}");
+    var result = await client.PostAsync($"{_context.VariablesGlobales.Find(7).Valor}{endpoint}", new FormUrlEncodedContent(data));
+    string responseBody = await result.Content.ReadAsStringAsync();
+    return JsonConvert.DeserializeObject<StripeId>(responseBody);
+  }
+
+  [Route("/gateways/stripe")]
+  public async Task<IActionResult> GatewayStripe()
+  {
+    int amount = 100;
+    string order = "order_123456";
+    StripeId product = await ReturnStripeId
+    (
+      "/v1/products",
+      new Dictionary<string, string> {
+        { "name" , "generic" }
+      }
+    );
+
+    StripeId price = await ReturnStripeId
+    (
+      "/v1/prices",
+      new Dictionary<string, string> {
+        {"unit_amount", $"{amount}"},
+        {"currency", "usd"},
+        {"product", product.Id}
+      }
+    );
+
+    StripeId checkout = await ReturnStripeId
+    (
+      "/v1/checkout/sessions",
+      new Dictionary<string, string>
+      {
+        {"success_url", $"http://127.0.0.1:5281/gateways/stripe/response?stripe={order}"},
+        {"currency", "usd"},
+        {"line_items[0][price]", $"{price.Id}"},
+        {"line_items[0][quantity]", "1"},
+        {"mode", "payment"}
+      }
+    );
+
+    ViewBag.Price = amount;
+    ViewBag.Order = order;
+
+    // return Content($"Product = {product.Id} | Price = {price.Id} | Order = {checkout.Id} | URL = {checkout.Url}");
+    return View(checkout);
+  }
+
+  [Route("/gateways/stripe/response")]
+  public IActionResult GatewayStripeResponse([FromQuery(Name = "stripe")] string stripe)
+  {
+    ViewBag.Token = stripe;
+    return View();
+  }
 }

@@ -1,0 +1,20 @@
+@model Web.Models.StripeId;
+@{
+  ViewData["Title"] = "Payment Gateways";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Gateway" asp-action="Index">Payment Gateways</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Gateway" asp-action="GatewayStripe">Stripe</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Response</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Gateway Paypal Implementation</h2>
+
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  Pay order: <strong>@ViewBag.Token</strong> was successfully created!
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
