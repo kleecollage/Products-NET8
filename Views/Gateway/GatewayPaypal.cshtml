@@ -11,18 +11,18 @@
   </ol>
 </nav>
 
-<h2 class="text-center">Webpay Gateway</h2>
+<h2 class="text-center">Gateway Paypal Implementation</h2>
 <ul>
   <li><strong>Product:</strong> Coffe Table</li>
   <li><strong>Value:</strong> $100.00</li>
   <li><strong>Quantity:</strong> 2</li>
-  <li><strong>Buy Order:</strong> 34512</li>
-  <li><strong>URL: </strong> @Model.PaypalToken</li>
-  <li><strong>Token: </strong> @Model.PaypalToken</li>
+  <li><strong>Buy Order:</strong> @Model.PaypalOrder.Id</li>
+  <li><strong>Token: </strong> @Model.PaypalToken.AccessToken</li>
+  <li><strong>URL: </strong> https://www.sandbox.paypal.com/checkoutnow?token=@Model.PaypalOrder.Id</li>
 </ul>
 <form action="#" method="post" name="form">
-  <input type="hidden" name="token_ws" id="token_ws" value="@Model.PaypalToken" />
-  <a href="javascript:void(0);" onclick="document.form.submit()" class="btn btn-danger">
+  <input type="hidden" name="token_ws" id="token_ws" value="@Model.PaypalToken.AccessToken" />
+  <a href=" https://www.sandbox.paypal.com/checkoutnow?token=@Model.PaypalOrder.Id" class="btn btn-warning">
     <i class="fas fa-dollar-sign"></i> Pay
   </a>
 </form>

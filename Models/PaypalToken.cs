@@ -35,27 +35,4 @@ namespace Web.Models
     [JsonProperty("nonce")]
     public string Nonce { get; set; }
   }
-
-  public partial class PaypalToken
-  {
-    public static PaypalToken FromJson(string json) => JsonConvert.DeserializeObject<PaypalToken>(json, Web.Models.Converter.Settings);
-  }
-
-  public static class Serialize
-  {
-    public static string ToJson(this PaypalToken self) => JsonConvert.SerializeObject(self, Web.Models.Converter.Settings);
-  }
-
-  internal static class Converter
-  {
-    public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-    {
-      MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-      DateParseHandling = DateParseHandling.None,
-      Converters =
-      {
-        new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-      },
-    };
-  }
 }

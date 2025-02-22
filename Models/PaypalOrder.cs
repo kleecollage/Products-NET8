@@ -7,8 +7,7 @@
 //    var papalOrder = PapalOrder.FromJson(jsonString);
 
 namespace Web.Models;
-using System;
-using System.Collections.Generic;
+
 
 using System.Globalization;
 using Newtonsoft.Json;
@@ -19,21 +18,21 @@ public partial class PaypalOrder
   [JsonProperty("id")]
   public string Id { get; set; }
 
-  // [JsonProperty("intent")]
-  // public string Intent { get; set; }
+  [JsonProperty("intent")]
+  public string Intent { get; set; }
 
   [JsonProperty("status")]
   public string Status { get; set; }
 
-//   [JsonProperty("purchase_units")]
-//   public PurchaseUnit[] PurchaseUnits { get; set; }
+  [JsonProperty("purchase_units")]
+  public PurchaseUnit[] PurchaseUnits { get; set; }
 
-//   [JsonProperty("create_time")]
-//   public DateTimeOffset CreateTime { get; set; }
+  // [JsonProperty("create_time")]
+  // public DateTimeOffset CreateTime { get; set; }
 
-//   [JsonProperty("links")]
-//   public Link[] Links { get; set; }
-// }
+  // [JsonProperty("links")]
+  // public Link[] Links { get; set; }
+}
 
 // public partial class Link
 // {
@@ -47,26 +46,26 @@ public partial class PaypalOrder
 //   public string Method { get; set; }
 // }
 
-// public partial class PurchaseUnit
-// {
-//   [JsonProperty("reference_id")]
-//   public string ReferenceId { get; set; }
+public partial class PurchaseUnit
+{
+  [JsonProperty("reference_id")]
+  public string ReferenceId { get; set; }
 
-//   [JsonProperty("amount")]
-//   public Amount Amount { get; set; }
+  [JsonProperty("amount")]
+  public Amount Amount { get; set; }
 
-//   [JsonProperty("payee")]
-//   public Payee Payee { get; set; }
-// }
+  // [JsonProperty("payee")]
+  // public Payee Payee { get; set; }
+}
 
-// public partial class Amount
-// {
-//   [JsonProperty("currency_code")]
-//   public string CurrencyCode { get; set; }
+public partial class Amount
+{
+  [JsonProperty("currency_code")]
+  public string CurrencyCode { get; set; }
 
-//   [JsonProperty("value")]
-//   public string Value { get; set; }
-// }
+  [JsonProperty("value")]
+  public string Value { get; set; }
+}
 
 // public partial class Payee
 // {
@@ -76,26 +75,3 @@ public partial class PaypalOrder
 //   [JsonProperty("merchant_id")]
 //   public string MerchantId { get; set; }
 // }
-
-// public partial class PapalOrder
-// {
-//   public static PapalOrder FromJson(string json) => JsonConvert.DeserializeObject<PapalOrder>(json, Web.Models.Converter.Settings);
-// }
-
-// public static class Serialize
-// {
-//   public static string ToJson(this PapalOrder self) => JsonConvert.SerializeObject(self, Web.Models.Converter.Settings);
-// }
-
-// internal static class Converter
-// {
-//   public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-//   {
-//     MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-//     DateParseHandling = DateParseHandling.None,
-//     Converters =
-//       {
-//         new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-//       },
-//   };
-}

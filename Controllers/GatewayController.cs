@@ -75,14 +75,75 @@ public class GatewayController: Controller
     var result = await client.PostAsync($"{_context.VariablesGlobales.Find(4).Valor}/v1/oauth2/token", new FormUrlEncodedContent(data));
     string responseBody = await result.Content.ReadAsStringAsync();
 
-    return PaypalToken.FromJson(responseBody);
+    return JsonConvert.DeserializeObject<PaypalToken>(responseBody);
   }
 
   [Route("/gateways/paypal")]
   public async Task<IActionResult> GatewayPaypal()
   {
     PaypalToken paypalToken = await ReturnToken();
-    return View();
+    string order = $"order_{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()}";
+    int amount = 10;
+    // Pay Order
+    var data = new
+    {
+      intent = "CAPTURE",
+      purchase_units = new[] {
+        new {
+          reference_id = order,
+          amount = new {
+            currency_code = "USD",
+            value = $"{amount}.0"
+          },
+        },
+      },
+      payment_source = new {
+        paypal = new {
+          experience_context = new {
+            payment_method_preference = "IMMEDIATE_PAYMENT_REQUIRED",
+            payment_method_selected = "PAYPAL",
+            brand_name = "Klee",
+            locale = "en-EN",
+            landing_page = "LOGIN",
+            shipping_preference = "NO_SHIPPING",
+            user_action = "PAY_NOW",
+            return_url = "http://127.0.0.1:5281/gateways/paypal/response",
+            cancel_url = "http://127.0.0.1:5281/gateways/paypal/cancel"
+          }
+        }
+      }
+    };
+
+    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {paypalToken.AccessToken}");
+    _client.DefaultRequestHeaders.Add("PayPal-Request-Id", order);
+
+    var result = await _client.PostAsJsonAsync($"{_context.VariablesGlobales.Find(4).Valor}/v2/checkout/orders", data);
+    string responseBody = await result.Content.ReadAsStringAsync();
+
+    PaypalOrder paypalOrder = JsonConvert.DeserializeObject<PaypalOrder>(responseBody);
+    PaypalViewModel paypal = new() {
+      PaypalToken = paypalToken,
+      PaypalOrder = paypalOrder
+    };
+
+    // return Content($"Token={paypalToken.AccessToken}");
+    return View(paypal);
   }
 
+  [Route("/gateways/paypal/response")]
+  public async Task<IActionResult> GateWayPaypalResponse([FromQuery(Name="token")] string token)
+  {
+    PaypalToken paypalToken = await ReturnToken();
+    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {paypalToken.AccessToken}");
+    var result = await _client.PostAsJsonAsync($"{_context.VariablesGlobales.Find(4).Valor}/v2/checkout/orders/{token}/capture", new {});
+    string responseBody = await result.Content.ReadAsStringAsync();
+    PaypalOrder paypalOrder = JsonConvert.DeserializeObject<PaypalOrder>(responseBody);
+
+    return View(paypalOrder);
+  }
+
+
+  // ########## PAYPAL ########## //
 }
