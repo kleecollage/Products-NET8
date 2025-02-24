@@ -1,7 +1,53 @@
+@model Web.Models.Usuario;
 @{
   ViewData["Title"] = "Security";
+  string FlashClass = (string) TempData["FlashClass"];
+  string FlashMessage = (string) TempData["FlashMessage"];
 }
-<h2 class="text-center">Repository Pattern</h2>
-<ul>
 
-</ul>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Security" asp-action="Index">Security</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Login</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Login</h2>
+
+@if (FlashClass != null)
+{
+  <div class="alert alert-@FlashClass alert-dismissible fade show" role="alert">
+    @FlashMessage
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<div class="row">
+    <form asp-controller="Security" asp-action="SecurityLogin" method="post">
+      <div asp-validation-summary="All" class="text-danger"></div>
+      <input type="hidden" asp-for="Nombre" value="empty">
+
+      <div class="form-group">
+        <label asp-for="Correo" class="control-label"></label>
+        <input asp-for="Correo" type="email" placeholder="Email" class="form-control" value="j.doe@mail.com">
+      </div>
+
+      <div class="form-group">
+        <label asp-for="Password" class="control-label"></label>
+        <input asp-for="Password" type="password" placeholder="Password" class="form-control" value="Admin123*">
+      </div>
+      <hr />
+
+      <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Login </button>
+    </form>
+</div>
+<hr />
+<div class="row">
+  <p>
+    <a href="@Url.Action("SecurityRegister", "Security")"> Don't have an account yet? </a> /
+    <a href="@Url.Action("SecurityRestore", "Security")">Restore Passsword</a>
+  </p>
+</div>

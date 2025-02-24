@@ -20,6 +20,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 .AddCookie(options => {
     options.LoginPath = "/security/login";
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
 });
 // </Authentication>
 var app = builder.Build();
@@ -37,8 +38,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-app.UseAuthentication(); // Authentication
+app.UseAuthentication(); //! THIS ONE GOES FIRST
+app.UseAuthorization(); // this one goes second
 
 app.MapControllerRoute(
     name: "default",

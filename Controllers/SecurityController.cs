@@ -1,3 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Web.Data;
@@ -86,6 +90,66 @@ public class SecurityController(ApplicationDbContext context) : Controller
 
   [Route("/security/login")]
   public IActionResult SecurityLogin()
+  {
+    return View();
+  }
+
+  [HttpPost]
+  [Route("/security/login")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> SecurityLogin(Usuario model)
+  {
+    if (ModelState.IsValid)
+    {
+      Usuario user = await _userRepository.GetUser(model.Correo, Utils.CreatePassword(model.Password));
+
+      if(user == null)
+      {
+        FlashClass = "danger";
+        FlashMessage = "Invalid Auth Credentials";
+
+        return RedirectToAction(nameof(SecurityLogin));
+      }
+
+      List<Claim> claims = [
+        new Claim("Id", user.Id.ToString()),
+        new Claim("Name", user.Nombre),
+      ];
+
+      ClaimsIdentity claimsIdentity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+      AuthenticationProperties properties = new() { AllowRefresh = true };
+      await HttpContext.SignInAsync(
+          CookieAuthenticationDefaults.AuthenticationScheme,
+          new ClaimsPrincipal(claimsIdentity),
+          properties
+        );
+
+      return RedirectToAction(nameof(SecurityProtected));
+    }
+
+    return View();
+  }
+
+  [Authorize]
+  [Route("/security/protected")]
+  public IActionResult SecurityProtected()
+  {
+    return View();
+  }
+
+  [Route("/security/logout")]
+  public async Task<IActionResult> SecurityLogout()
+  {
+    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+    FlashClass = "success";
+    FlashMessage = "You have logged out successfully";
+
+    return RedirectToAction(nameof(SecurityLogin));
+  }
+
+  [Route("/security/restore")]
+  public IActionResult SecurityRestore()
   {
     return View();
   }

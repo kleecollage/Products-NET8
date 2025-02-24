@@ -1,0 +1,22 @@
+@model Web.Models.Usuario;
+@{
+  ViewData["Title"] = "Security";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+    <li class="breadcrumb-item"><a asp-controller="Security" asp-action="Index">Security</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Protected</li>
+  </ol>
+</nav>
+
+<h2 class="text-center">Protected Route</h2>
+
+<ul>
+  <li>ID: @User.FindFirst("Id").Value</li>
+  <li>Name: @User.FindFirst("Name").Value</li>
+  <li>
+    <a href="#" onclick="logout('/security/logout');" class="btn btn-secondary">Logout</a>
+  </li>
+</ul>
