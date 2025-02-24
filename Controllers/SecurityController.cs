@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ public class SecurityController(ApplicationDbContext context) : Controller
   [TempData] public string FlashClass { get; set; }
   [TempData] public string FlashMessage { get; set; }
 
-    [Route("/security")]
+  [Route("/security")]
   public IActionResult Index()
   {
     return View();
@@ -152,6 +153,80 @@ public class SecurityController(ApplicationDbContext context) : Controller
   public IActionResult SecurityRestore()
   {
     return View();
+  }
+
+  [HttpPost]
+  [Route("/security/restore")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> SecurityRestore(Usuario model)
+  {
+    if (ModelState.IsValid)
+    {
+      Usuario update = await _userRepository.GetUserByEmailActive(model.Correo);
+      if (update == null)
+      {
+        FlashClass = "danger";
+        FlashMessage = "This email dosn't have an account yet";
+
+        return RedirectToAction(nameof(SecurityRestore));
+      }
+
+      string code = Utils.GenerateToken();
+      string url = $"http://127.0.0.1:5281/security/restore/{code}";
+      // send email
+      Utils.SendEmail(
+          model.Correo,
+          "Restore your password",
+          /* html` */
+          "<h1>Restore your password</h1> Hi, click the link bellow so you can restablish your password<br/>" +
+          $"<a href='{url}'>RESET PASSWORD</a> or copy and paste this link on your favorite browser: {url}"
+        );
+      update.Token = code;
+      _userRepository.Update(update);
+      // redirect
+      FlashClass = "success";
+      FlashMessage = "We've sent you an email with instructions to reset your password";
+
+      return RedirectToAction(nameof(SecurityRestore));
+    }
+
+    return View();
+  }
+
+  [Route("/security/restore/{token}")]
+  public async Task<IActionResult> SecurityReset(string token)
+  {
+    if (token.IsNullOrEmpty()) return NotFound();
+
+    Usuario user = await _userRepository.GetUserActiveByToken(token);
+    if (user == null) return NotFound();
+
+    return View(user);
+  }
+
+  [HttpPost]
+  [Route("/security/restore/{token}")]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> SecurityReset(string token, Usuario model)
+  {
+    if (token.IsNullOrEmpty()) return NotFound();
+
+    Usuario user = await _userRepository.GetUserActiveByToken(token);
+    if (user == null) return NotFound();
+
+    if (ModelState.IsValid)
+    {
+      user.Token = "";
+      user.Password = Utils.CreatePassword(model.Password);
+      _userRepository.Update(user);
+
+      FlashClass = "success";
+      FlashMessage = "Your new password is ready!";
+
+      return RedirectToAction(nameof(SecurityLogin));
+    }
+
+    return View(user);
   }
 
 }

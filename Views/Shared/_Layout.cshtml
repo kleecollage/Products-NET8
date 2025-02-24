@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -32,11 +33,15 @@
         <a asp-controller="home" asp-action="index" class="p-2 link-secondary">Home</a>
         <a asp-controller="Razor" asp-action="Index" class="p-2 link-secondary">Razor</a>
         <a asp-controller="Utils" asp-action="Index" class="p-2 link-secondary">Utils</a>
-        <a asp-controller="ApiClient" asp-action="Index" class="p-2 link-secondary">API Client</a>
         <a asp-controller="Entity" asp-action="Index" class="p-2 link-secondary">Entity Framework</a>
         <a asp-controller="Repository" asp-action="Index" class="p-2 link-secondary">Repository Pattern</a>
-        <a asp-controller="Gateway" asp-action="Index" class="p-2 link-secondary">Gateways</a>
         <a asp-controller="Security" asp-action="Index" class="p-2 link-secondary">Security</a>
+        <a asp-controller="Gateway" asp-action="Index" class="p-2 link-secondary">Gateways</a>
+
+        @if(User.Identity.IsAuthenticated) {
+          <a asp-controller="ApiClient" asp-action="Index" class="p-2 link-secondary">API Client</a>
+        }
+
         <a asp-controller="Home" asp-action="Us" class="p-2 link-secondary">Us</a>
       </nav>
     </div>
