@@ -8,14 +8,16 @@ public class Usuario
   public int Id { get; set; }
 
   [Display(Name="Name")]
-  [Required(ErrorMessage = "This field is required")]
+  [Required(ErrorMessage = "Field Name is required")]
   public string Nombre { get; set; }
 
   [Display(Name = "Email")]
-  [Required(ErrorMessage = "This field is required")]
+  [Required(ErrorMessage = "Email is required")]
+  [EmailAddress(ErrorMessage = "This email is not valid")]
   public string Correo { get; set; }
 
-  [Required(ErrorMessage = "This field is required")]
+  [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,20}$",
+    ErrorMessage = "Password must contain at least 1 number, 1 mayusc and 1 minus, whith at least 6 characters" )]
   public string Password { get; set; }
 
   public int Estado { get; set; }
