@@ -7,24 +7,16 @@ using Web.Repository;
 
 namespace Web.Controllers;
 
-public class RepositoryController: Controller
+public class RepositoryController(ApplicationDbContext context, IWebHostEnvironment hostingEnvironmet) : Controller
 {
-  private readonly IWebHostEnvironment _hostingEnvironmet;
-  private readonly TematicaRepository _tematicaRepository;
-  private readonly MovieRepository _movieRepository;
-  private readonly MoviePhotoRepository _moviePhotoRepository;
+  private readonly IWebHostEnvironment _hostingEnvironmet = hostingEnvironmet;
+  private readonly TematicaRepository _tematicaRepository = new(context);
+  private readonly MovieRepository _movieRepository = new(context);
+  private readonly MoviePhotoRepository _moviePhotoRepository = new(context);
   [TempData] public string FlashClass { get; set; }
   [TempData] public string FlashMessage { get; set; }
 
-  public RepositoryController(ApplicationDbContext context, IWebHostEnvironment hostingEnvironmet)
-  {
-    _hostingEnvironmet = hostingEnvironmet;
-    _tematicaRepository = new TematicaRepository(context);
-    _movieRepository = new MovieRepository(context);
-    _moviePhotoRepository = new MoviePhotoRepository(context);
-  }
-
-  [Route("/repository-pattern")]
+    [Route("/repository-pattern")]
   public IActionResult Index()
   {
     return View();
