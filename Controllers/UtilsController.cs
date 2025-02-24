@@ -33,7 +33,7 @@ public class UtilsController : Controller
     [Route("/utils/email")]
     public IActionResult UtilsEmail()
     {
-        MailMessage mail = new MailMessage();
+        MailMessage mail = new();
         mail.To.Add("test@gmail.com");
         mail.From =  new MailAddress("another_mail@gmail.com");
         mail.Subject = "Test Email. Subject";

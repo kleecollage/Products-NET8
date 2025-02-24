@@ -45,7 +45,7 @@ class Utils
         Host = "sandbox.smtp.mailtrap.io",
         Port = 587,
         UseDefaultCredentials = false,
-        Credentials = new System.Net.NetworkCredential("9089a3c9b9b8a2", "117ed15a29ff85"),
+        Credentials = new System.Net.NetworkCredential("USER", "PASSWORD"),
         EnableSsl = true
     };
 
